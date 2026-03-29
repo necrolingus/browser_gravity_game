@@ -1,288 +1,641 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Gravity Fall</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: #0a0a1a; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-canvas { display: block; max-width: 900px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Gravity Fall</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-/* Overlays */
-.overlay {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  display: flex; align-items: center; justify-content: center;
-  pointer-events: none; z-index: 10;
-}
-.overlay.hidden { display: none; }
-.overlay-content {
-  pointer-events: all;
-  background: rgba(10, 10, 30, 0.92);
-  border: 2px solid rgba(100, 200, 255, 0.3);
-  border-radius: 16px;
-  padding: 40px 48px;
-  text-align: center;
-  color: #e0e8f0;
-  max-width: 520px;
-  box-shadow: 0 0 60px rgba(50, 120, 255, 0.15);
-}
-.overlay-content h1 {
-  font-size: 42px; margin-bottom: 12px;
-  background: linear-gradient(135deg, #4af, #8f6);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.overlay-content h2 {
-  font-size: 28px; margin-bottom: 16px; color: #aac;
-}
-.overlay-content p, .overlay-content ul {
-  font-size: 15px; line-height: 1.6; margin-bottom: 14px; color: #99aabb;
-}
-.overlay-content ul { text-align: left; padding-left: 24px; }
-.overlay-content li { margin-bottom: 4px; }
-.btn-row { display: flex; gap: 16px; justify-content: center; margin-top: 20px; }
-.btn {
-  padding: 14px 32px; font-size: 18px; font-weight: 700;
-  border: none; border-radius: 10px; cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
-  text-transform: uppercase; letter-spacing: 1px;
-}
-.btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
-.btn:active { transform: translateY(0); }
-.btn-easy { background: linear-gradient(135deg, #2a4, #4c8); color: #fff; }
-.btn-hard { background: linear-gradient(135deg, #c33, #e55); color: #fff; }
-.btn-again { background: linear-gradient(135deg, #36a, #58c); color: #fff; }
-.btn-end {
-  position: fixed; top: 14px; right: 14px; z-index: 20;
-  padding: 8px 18px; font-size: 13px; font-weight: 600;
-  background: rgba(200, 50, 50, 0.85); color: #fff;
-  border: 1px solid rgba(255,100,100,0.4); border-radius: 8px;
-  cursor: pointer; transition: background 0.2s;
-}
-.btn-end:hover { background: rgba(220, 60, 60, 1); }
-.btn-end.hidden { display: none; }
+    body {
+      background: #0a0a1a;
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-/* HUD */
-.hud {
-  position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 900px; z-index: 15;
-  padding: 16px 30px; display: flex; align-items: center; justify-content: center; gap: 28px;
-  background: rgba(10, 10, 30, 0.75);
-  font-size: 22px; color: #c0cee0; flex-wrap: wrap;
-}
-.hud.hidden { display: none; }
-.gravity-bar-container {
-  display: none;
-  width: 300px; height: 36px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 18px; overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.15);
-  position: relative;
-}
-.gravity-bar-fill {
-  height: 100%; border-radius: 18px;
-  transition: width 0.05s linear;
-  background: #4c4;
-}
-.gravity-bar-label {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; font-weight: 700; color: #fff;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
-}
-.hud-item { white-space: nowrap; }
-.hud-item span { font-weight: 700; color: #fff; }
-.hud-sep { width: 1px; height: 36px; background: rgba(255,255,255,0.15); }
-.orb-stat { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; font-size: 22px; }
-.orb-dot {
-  width: 32px; height: 32px; border-radius: 50%; display: inline-flex;
-  align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 800; line-height: 1;
-}
-.orb-dot.yellow { background: #ffdd00; box-shadow: 0 0 10px rgba(255,220,0,0.6); color: #553d00; }
-.orb-dot.blue { background: #66ddff; box-shadow: 0 0 10px rgba(100,220,255,0.6); color: #1a4a5c; }
-.orb-dot.red { background: #ff3355; box-shadow: 0 0 10px rgba(255,50,80,0.6); color: #fff; }
-.orb-dot.white { background: #ffffff; box-shadow: 0 0 12px rgba(255,255,255,0.8); color: #333; }
-.hud-total { font-weight: 700; color: #4f8; font-size: 28px; }
-.hud-penalty { font-weight: 700; color: #ff5566; font-size: 22px; }
-.hud-mult {
-  font-weight: 700; font-size: 22px;
-  transition: color 0.2s, text-shadow 0.2s;
-}
-.hud-mult.mult-1 { color: #c0cee0; }
-.hud-mult.mult-low { color: #f0c040; text-shadow: 0 0 6px rgba(240,190,60,0.5); }
-.hud-mult.mult-high { color: #ff5050; text-shadow: 0 0 10px rgba(255,80,80,0.6); }
-.booster-active {
-  color: #ff3050; font-weight: 700; text-shadow: 0 0 8px rgba(255,48,80,0.6);
-  animation: pulse 0.6s ease-in-out infinite alternate;
-}
-@keyframes pulse { from { opacity: 0.7; } to { opacity: 1; } }
-.stat-row { margin: 8px 0; font-size: 18px; }
-.stat-row span { font-weight: 700; color: #fff; }
-.mobile-hint { display: none; }
-.desktop-hint { display: inline; }
+    canvas {
+      display: block;
+      max-width: 900px;
+    }
 
-/* Touch Controls */
-.touch-controls {
-  display: none;
-  position: fixed; bottom: 28px; left: 0; width: 100%; z-index: 25;
-  padding: 10px 16px 16px; pointer-events: none;
-  justify-content: space-between; align-items: flex-end;
-  background: linear-gradient(to top, rgba(5,5,16,0.85) 0%, rgba(5,5,16,0.4) 70%, transparent 100%);
-}
-.touch-group {
-  display: flex; gap: 10px; pointer-events: all;
-}
-.touch-btn {
-  width: 64px; height: 64px; border-radius: 16px;
-  border: 2px solid rgba(255,255,255,0.25);
-  background: rgba(30, 40, 70, 0.7);
-  color: #cde; font-size: 12px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  user-select: none; -webkit-user-select: none;
-  touch-action: none;
-  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-  transition: background 0.1s, border-color 0.1s;
-}
-.touch-btn.active {
-  background: rgba(80, 140, 255, 0.5);
-  border-color: rgba(100, 180, 255, 0.7);
-}
-.touch-btn .btn-icon { font-size: 26px; line-height: 1; }
-.touch-btn .btn-label { font-size: 10px; margin-top: 2px; }
-.touch-btn-col { display: flex; flex-direction: column; align-items: center; }
-.touch-move-group { gap: 6px; }
-.touch-btn.wide { width: 74px; }
+    /* Overlays */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 10;
+    }
 
-/* Mobile-responsive HUD */
-@media (max-width: 700px) {
-  .touch-controls { display: flex; }
-  body { overflow: hidden; position: fixed; width: 100%; height: 100%; }
-  .hud {
-    padding: 4px 6px; gap: 4px; font-size: 11px;
-    flex-wrap: wrap; justify-content: center;
-  }
-  .gravity-bar-container { display: none; } /* also hidden globally below */
-  .gravity-bar-label { font-size: 9px; }
-  .orb-dot { width: 16px; height: 16px; font-size: 7px; }
-  .orb-stat { gap: 2px; font-size: 11px; }
-  .hud-sep { display: none; }
-  .hud-total { font-size: 14px; }
-  .hud-penalty { font-size: 11px; }
-  .hud-item { font-size: 10px; }
-  #hudDifficulty { display: none; }
-  .mobile-hint { display: inline; }
-  .desktop-hint { display: none; }
-  .btn-end { top: 2px; right: 2px; font-size: 9px; padding: 3px 8px; z-index: 30; }
-  .overlay-content {
-    padding: 20px 16px; max-width: 92vw;
-    max-height: calc(100vh - 170px); overflow-y: auto;
-  }
-  .overlay-content h1 { font-size: 26px; }
-  .overlay-content h2 { font-size: 20px; }
-  .overlay-content p, .overlay-content ul { font-size: 12px; line-height: 1.4; margin-bottom: 8px; }
-  .overlay-content li { margin-bottom: 2px; }
-  .btn { padding: 10px 20px; font-size: 14px; }
-  .btn-row { margin-top: 12px; }
-}
-</style>
+    .overlay.hidden {
+      display: none;
+    }
+
+    .overlay-content {
+      pointer-events: all;
+      background: rgba(10, 10, 30, 0.92);
+      border: 2px solid rgba(100, 200, 255, 0.3);
+      border-radius: 16px;
+      padding: 40px 48px;
+      text-align: center;
+      color: #e0e8f0;
+      max-width: 520px;
+      box-shadow: 0 0 60px rgba(50, 120, 255, 0.15);
+    }
+
+    .overlay-content h1 {
+      font-size: 42px;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #4af, #8f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .overlay-content h2 {
+      font-size: 28px;
+      margin-bottom: 16px;
+      color: #aac;
+    }
+
+    .overlay-content p,
+    .overlay-content ul {
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 14px;
+      color: #99aabb;
+    }
+
+    .overlay-content ul {
+      text-align: left;
+      padding-left: 24px;
+    }
+
+    .overlay-content li {
+      margin-bottom: 4px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 14px 32px;
+      font-size: 18px;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-easy {
+      background: linear-gradient(135deg, #2a4, #4c8);
+      color: #fff;
+    }
+
+    .btn-hard {
+      background: linear-gradient(135deg, #c33, #e55);
+      color: #fff;
+    }
+
+    .btn-again {
+      background: linear-gradient(135deg, #36a, #58c);
+      color: #fff;
+    }
+
+    .btn-end {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      z-index: 20;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      background: rgba(200, 50, 50, 0.85);
+      color: #fff;
+      border: 1px solid rgba(255, 100, 100, 0.4);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-end:hover {
+      background: rgba(220, 60, 60, 1);
+    }
+
+    .btn-end.hidden {
+      display: none;
+    }
+
+    /* HUD */
+    .hud {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 900px;
+      z-index: 15;
+      padding: 16px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      background: rgba(10, 10, 30, 0.75);
+      font-size: 22px;
+      color: #c0cee0;
+      flex-wrap: wrap;
+    }
+
+    .hud.hidden {
+      display: none;
+    }
+
+    .gravity-bar-container {
+      display: none;
+      width: 300px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      position: relative;
+    }
+
+    .gravity-bar-fill {
+      height: 100%;
+      border-radius: 18px;
+      transition: width 0.05s linear;
+      background: #4c4;
+    }
+
+    .gravity-bar-label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    }
+
+    .hud-item {
+      white-space: nowrap;
+    }
+
+    .hud-item span {
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .hud-sep {
+      width: 1px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .orb-stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      font-size: 22px;
+    }
+
+    .orb-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .orb-dot.yellow {
+      background: #ffdd00;
+      box-shadow: 0 0 10px rgba(255, 220, 0, 0.6);
+      color: #553d00;
+    }
+
+    .orb-dot.blue {
+      background: #66ddff;
+      box-shadow: 0 0 10px rgba(100, 220, 255, 0.6);
+      color: #1a4a5c;
+    }
+
+    .orb-dot.red {
+      background: #ff3355;
+      box-shadow: 0 0 10px rgba(255, 50, 80, 0.6);
+      color: #fff;
+    }
+
+    .orb-dot.white {
+      background: #ffffff;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+      color: #333;
+    }
+
+    .hud-total {
+      font-weight: 700;
+      color: #4f8;
+      font-size: 28px;
+    }
+
+    .hud-penalty {
+      font-weight: 700;
+      color: #ff5566;
+      font-size: 22px;
+    }
+
+    .hud-mult {
+      font-weight: 700;
+      font-size: 22px;
+      transition: color 0.2s, text-shadow 0.2s;
+    }
+
+    .hud-mult.mult-1 {
+      color: #c0cee0;
+    }
+
+    .hud-mult.mult-low {
+      color: #f0c040;
+      text-shadow: 0 0 6px rgba(240, 190, 60, 0.5);
+    }
+
+    .hud-mult.mult-high {
+      color: #ff5050;
+      text-shadow: 0 0 10px rgba(255, 80, 80, 0.6);
+    }
+
+    .booster-active {
+      color: #ff3050;
+      font-weight: 700;
+      text-shadow: 0 0 8px rgba(255, 48, 80, 0.6);
+      animation: pulse 0.6s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse {
+      from {
+        opacity: 0.7;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .stat-row {
+      margin: 8px 0;
+      font-size: 18px;
+    }
+
+    .stat-row span {
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .mobile-hint {
+      display: none;
+    }
+
+    .desktop-hint {
+      display: inline;
+    }
+
+    /* Touch Controls */
+    .touch-controls {
+      display: none;
+      position: fixed;
+      bottom: 28px;
+      left: 0;
+      width: 100%;
+      z-index: 25;
+      padding: 10px 16px 16px;
+      pointer-events: none;
+      justify-content: space-between;
+      align-items: flex-end;
+      background: linear-gradient(to top, rgba(5, 5, 16, 0.85) 0%, rgba(5, 5, 16, 0.4) 70%, transparent 100%);
+    }
+
+    .touch-group {
+      display: flex;
+      gap: 10px;
+      pointer-events: all;
+    }
+
+    .touch-btn {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      background: rgba(30, 40, 70, 0.7);
+      color: #cde;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      transition: background 0.1s, border-color 0.1s;
+    }
+
+    .touch-btn.active {
+      background: rgba(80, 140, 255, 0.5);
+      border-color: rgba(100, 180, 255, 0.7);
+    }
+
+    .touch-btn .btn-icon {
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .touch-btn .btn-label {
+      font-size: 10px;
+      margin-top: 2px;
+    }
+
+    .touch-btn-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .touch-move-group {
+      gap: 6px;
+    }
+
+    .touch-btn.wide {
+      width: 74px;
+    }
+
+    /* Mobile-responsive HUD */
+    @media (max-width: 700px) {
+      .touch-controls {
+        display: flex;
+      }
+
+      body {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+      }
+
+      .hud {
+        padding: 4px 6px;
+        gap: 4px;
+        font-size: 11px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .gravity-bar-container {
+        display: none;
+      }
+
+      /* also hidden globally below */
+      .gravity-bar-label {
+        font-size: 9px;
+      }
+
+      .orb-dot {
+        width: 16px;
+        height: 16px;
+        font-size: 7px;
+      }
+
+      .orb-stat {
+        gap: 2px;
+        font-size: 11px;
+      }
+
+      .hud-sep {
+        display: none;
+      }
+
+      .hud-total {
+        font-size: 14px;
+      }
+
+      .hud-penalty {
+        font-size: 11px;
+      }
+
+      .hud-item {
+        font-size: 10px;
+      }
+
+      #hudDifficulty {
+        display: none;
+      }
+
+      .mobile-hint {
+        display: inline;
+      }
+
+      .desktop-hint {
+        display: none;
+      }
+
+      .btn-end {
+        top: 2px;
+        right: 2px;
+        font-size: 9px;
+        padding: 3px 8px;
+        z-index: 30;
+      }
+
+      .overlay-content {
+        padding: 20px 16px;
+        max-width: 92vw;
+        max-height: calc(100vh - 170px);
+        overflow-y: auto;
+      }
+
+      .overlay-content h1 {
+        font-size: 26px;
+      }
+
+      .overlay-content h2 {
+        font-size: 20px;
+      }
+
+      .overlay-content p,
+      .overlay-content ul {
+        font-size: 12px;
+        line-height: 1.4;
+        margin-bottom: 8px;
+      }
+
+      .overlay-content li {
+        margin-bottom: 2px;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+
+      .btn-row {
+        margin-top: 12px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<canvas id="gameCanvas"></canvas>
+  <canvas id="gameCanvas"></canvas>
 
-<!-- HUD -->
-<div class="hud hidden" id="hud">
-  <div class="gravity-bar-container" style="display:none">
-    <div class="gravity-bar-fill" id="gravityBarFill"></div>
-    <div class="gravity-bar-label" id="gravityBarLabel">100</div>
-  </div>
-  <div class="orb-stat"><span class="orb-dot yellow">2</span><span id="hudYellow">0</span> <span style="color:#99a">= </span><span id="hudYellowPts" style="color:#ffdd00">0</span></div>
-  <div class="orb-stat"><span class="orb-dot blue">5</span><span id="hudBlue">0</span> <span style="color:#99a">= </span><span id="hudBluePts" style="color:#66ddff">0</span></div>
-  <div class="orb-stat"><span class="orb-dot red">10</span><span id="hudRed">0</span> <span style="color:#99a">= </span><span id="hudRedPts" style="color:#ff3355">0</span></div>
-  <div class="orb-stat"><span class="orb-dot white">25</span><span id="hudWhite">0</span> <span style="color:#99a">= </span><span id="hudWhitePts" style="color:#fff">0</span></div>
-  <div class="hud-sep"></div>
-  <div class="hud-item">Score: <span class="hud-total" id="hudTotal">0</span><span class="hud-penalty" id="hudPenalty"></span></div>
-  <div class="hud-sep"></div>
-  <div class="hud-item hud-mult" id="hudMult">1.0x</div>
-  <div class="hud-item" id="hudDifficulty">Easy</div>
-  <div class="hud-item" id="hudBooster">Next booster: 12</div>
-</div>
-<button class="btn-end hidden" id="btnEnd">End Game</button>
-
-<!-- Title Screen -->
-<div class="overlay" id="titleOverlay">
-  <div class="overlay-content">
-    <h1>Gravity Fall</h1>
-    <p>Fall through platforms, collect orbs, manage your gravity!</p>
-    <ul>
-      <li><span class="desktop-hint">Arrow keys to move, Spacebar to jump</span><span class="mobile-hint">Use ◀ ▶ to move, JUMP to jump</span></li>
-      <li><span class="desktop-hint">While falling, hold Left/Right + Space to air dash!</span><span class="mobile-hint">While falling, hold ◀/▶ + JUMP to air dash!</span></li>
-      <li><span class="desktop-hint">Press Up arrow while falling for a jetpack boost (2 per fall)</span><span class="mobile-hint">Tap JET while falling for a jetpack boost (2 per fall)</span></li>
-      <li>Gravity drains while falling, refills on landing</li>
-      <li>Collect orbs for points: <span style="color:#ffdd00">&#9679;2</span> <span style="color:#66ddff">&#9679;5</span> <span style="color:#ff3355">&#9679;10</span> <span style="color:#fff">&#9679;25</span></li>
-      <li>Lower gravity = higher points multiplier (up to 1.5x!)</li>
-      <li>Every 12 landings grants a 2x Gravity Booster</li>
-      <li><b>Easy:</b> Empty gravity steals from your points (2:1)</li>
-      <li><b>Hard:</b> Empty gravity = instant game over</li>
-    </ul>
-    <div class="btn-row">
-      <button class="btn btn-easy" id="btnEasy">Play Easy</button>
-      <button class="btn btn-hard" id="btnHard">Play Hard</button>
+  <!-- HUD -->
+  <div class="hud hidden" id="hud">
+    <div class="gravity-bar-container" style="display:none">
+      <div class="gravity-bar-fill" id="gravityBarFill"></div>
+      <div class="gravity-bar-label" id="gravityBarLabel">100</div>
     </div>
+    <div class="orb-stat"><span class="orb-dot yellow">2</span><span id="hudYellow">0</span> <span style="color:#99a">=
+      </span><span id="hudYellowPts" style="color:#ffdd00">0</span></div>
+    <div class="orb-stat"><span class="orb-dot blue">5</span><span id="hudBlue">0</span> <span style="color:#99a">=
+      </span><span id="hudBluePts" style="color:#66ddff">0</span></div>
+    <div class="orb-stat"><span class="orb-dot red">10</span><span id="hudRed">0</span> <span style="color:#99a">=
+      </span><span id="hudRedPts" style="color:#ff3355">0</span></div>
+    <div class="orb-stat"><span class="orb-dot white">25</span><span id="hudWhite">0</span> <span style="color:#99a">=
+      </span><span id="hudWhitePts" style="color:#fff">0</span></div>
+    <div class="hud-sep"></div>
+    <div class="hud-item">Score: <span class="hud-total" id="hudTotal">0</span><span class="hud-penalty"
+        id="hudPenalty"></span></div>
+    <div class="hud-sep"></div>
+    <div class="hud-item hud-mult" id="hudMult">1.0x</div>
+    <div class="hud-item" id="hudDifficulty">Easy</div>
+    <div class="hud-item" id="hudBooster">Next booster: 12</div>
   </div>
-</div>
+  <button class="btn-end hidden" id="btnEnd">End Game</button>
 
-<!-- Game Over Screen -->
-<div class="overlay hidden" id="gameOverOverlay">
-  <div class="overlay-content">
-    <h2>Game Over</h2>
-    <div class="stat-row">Difficulty: <span id="goMode">Easy</span></div>
-    <div class="stat-row" style="margin-top:12px; font-size:14px; color:#99a;">Orbs Collected:</div>
-    <div class="stat-row"><span class="orb-dot yellow" style="display:inline-block;vertical-align:middle;margin-right:6px"></span><span id="goYellow">0</span> <span style="color:#99a">&times;2 =</span> <span id="goYellowPts" style="color:#ffdd00">0</span></div>
-    <div class="stat-row"><span class="orb-dot blue" style="display:inline-block;vertical-align:middle;margin-right:6px"></span><span id="goBlue">0</span> <span style="color:#99a">&times;5 =</span> <span id="goBluePts" style="color:#66ddff">0</span></div>
-    <div class="stat-row"><span class="orb-dot red" style="display:inline-block;vertical-align:middle;margin-right:6px"></span><span id="goRed">0</span> <span style="color:#99a">&times;10 =</span> <span id="goRedPts" style="color:#ff3355">0</span></div>
-    <div class="stat-row"><span class="orb-dot white" style="display:inline-block;vertical-align:middle;margin-right:6px"></span><span id="goWhite">0</span> <span style="color:#99a">&times;25 =</span> <span id="goWhitePts" style="color:#fff">0</span></div>
-    <div id="goPenaltyRow" class="stat-row" style="color:#ff5566"></div>
-    <div class="stat-row" style="margin-top:8px; font-size:22px;">Final Score: <span id="goTotal" style="color:#4f8; font-weight:700">0</span></div>
-    <div class="stat-row">Gravity Spent: <span id="goGravity">0</span></div>
-    <div class="btn-row">
-      <button class="btn btn-again" id="btnAgain">Play Again</button>
+  <!-- Title Screen -->
+  <div class="overlay" id="titleOverlay">
+    <div class="overlay-content">
+      <h1>Gravity Fall</h1>
+      <p>Fall through platforms, collect orbs, manage your gravity!</p>
+      <ul>
+        <li><span class="desktop-hint">Arrow keys to move, Spacebar to jump</span><span class="mobile-hint">Use ◀ ▶ to
+            move, JUMP to jump</span></li>
+        <li><span class="desktop-hint">While falling, hold Left/Right + Space to air dash!</span><span
+            class="mobile-hint">While falling, hold ◀/▶ + JUMP to air dash!</span></li>
+        <li><span class="desktop-hint">Press Up arrow while falling for a jetpack boost!</span><span
+            class="mobile-hint">Tap JET while falling for a jetpack boost!</span></li>
+        <li>Gravity drains while falling, refills on landing</li>
+        <li>Collect orbs for points: <span style="color:#ffdd00">&#9679;2</span> <span
+            style="color:#66ddff">&#9679;5</span> <span style="color:#ff3355">&#9679;10</span> <span
+            style="color:#fff">&#9679;25</span></li>
+        <li>Lower gravity = higher points multiplier (up to 1.5x!)</li>
+        <li>Every 12 landings grants a 2x Gravity Booster</li>
+        <li><b>Easy:</b> Empty gravity steals from your points (2:1)</li>
+        <li><b>Hard:</b> Empty gravity = instant game over</li>
+      </ul>
+      <div class="btn-row">
+        <button class="btn btn-easy" id="btnEasy">Play Easy</button>
+        <button class="btn btn-hard" id="btnHard">Play Hard</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Touch Controls (mobile) -->
-<div class="touch-controls" id="touchControls">
-  <div class="touch-group" style="flex-direction: column; gap: 8px;">
-    <div class="touch-btn" id="tbJetpack">
-      <div class="touch-btn-col"><span class="btn-icon">&#128640;</span><span class="btn-label">JET</span></div>
-    </div>
-    <div class="touch-btn" id="tbJump">
-      <div class="touch-btn-col"><span class="btn-icon">&#8679;</span><span class="btn-label">JUMP</span></div>
+  <!-- Game Over Screen -->
+  <div class="overlay hidden" id="gameOverOverlay">
+    <div class="overlay-content">
+      <h2>Game Over</h2>
+      <div class="stat-row">Difficulty: <span id="goMode">Easy</span></div>
+      <div class="stat-row" style="margin-top:12px; font-size:14px; color:#99a;">Orbs Collected:</div>
+      <div class="stat-row"><span class="orb-dot yellow"
+          style="display:inline-block;vertical-align:middle;margin-right:6px"></span><span id="goYellow">0</span> <span
+          style="color:#99a">&times;2 =</span> <span id="goYellowPts" style="color:#ffdd00">0</span></div>
+      <div class="stat-row"><span class="orb-dot blue"
+          style="display:inline-block;vertical-align:middle;margin-right:6px"></span><span id="goBlue">0</span> <span
+          style="color:#99a">&times;5 =</span> <span id="goBluePts" style="color:#66ddff">0</span></div>
+      <div class="stat-row"><span class="orb-dot red"
+          style="display:inline-block;vertical-align:middle;margin-right:6px"></span><span id="goRed">0</span> <span
+          style="color:#99a">&times;10 =</span> <span id="goRedPts" style="color:#ff3355">0</span></div>
+      <div class="stat-row"><span class="orb-dot white"
+          style="display:inline-block;vertical-align:middle;margin-right:6px"></span><span id="goWhite">0</span> <span
+          style="color:#99a">&times;25 =</span> <span id="goWhitePts" style="color:#fff">0</span></div>
+      <div id="goPenaltyRow" class="stat-row" style="color:#ff5566"></div>
+      <div class="stat-row" style="margin-top:8px; font-size:22px;">Final Score: <span id="goTotal"
+          style="color:#4f8; font-weight:700">0</span></div>
+      <div class="stat-row">Gravity Spent: <span id="goGravity">0</span></div>
+      <div class="btn-row">
+        <button class="btn btn-again" id="btnAgain">Play Again</button>
+      </div>
     </div>
   </div>
-  <div class="touch-group touch-move-group">
-    <div class="touch-btn wide" id="tbLeft">
-      <span class="btn-icon">&#9664;</span>
+
+  <!-- Touch Controls (mobile) -->
+  <div class="touch-controls" id="touchControls">
+    <div class="touch-group" style="flex-direction: column; gap: 8px;">
+      <div class="touch-btn" id="tbJetpack">
+        <div class="touch-btn-col"><span class="btn-icon">&#128640;</span><span class="btn-label">JET</span></div>
+      </div>
+      <div class="touch-btn" id="tbJump">
+        <div class="touch-btn-col"><span class="btn-icon">&#8679;</span><span class="btn-label">JUMP</span></div>
+      </div>
     </div>
-    <div class="touch-btn wide" id="tbRight">
-      <span class="btn-icon">&#9654;</span>
+    <div class="touch-group touch-move-group">
+      <div class="touch-btn wide" id="tbLeft">
+        <span class="btn-icon">&#9664;</span>
+      </div>
+      <div class="touch-btn wide" id="tbRight">
+        <span class="btn-icon">&#9654;</span>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- JS Modules (load order matters) -->
-<script src="js/constants.js"></script>
-<script src="js/state.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/platforms.js"></script>
-<script src="js/orbs.js"></script>
-<script src="js/player.js"></script>
-<script src="js/bot.js"></script>
-<script src="js/effects.js"></script>
-<script src="js/hud.js"></script>
-<script src="js/game.js"></script>
+  <!-- JS Modules (load order matters) -->
+  <script src="js/constants.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/platforms.js"></script>
+  <script src="js/orbs.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/bot.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/hud.js"></script>
+  <script src="js/game.js"></script>
 
 </body>
+
 </html>
