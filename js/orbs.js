@@ -91,6 +91,7 @@ function updateOrbs(dt) {
         const mult = getPointsMultiplier();
         const pts = orb.type.points * mult;
         G.orbPoints += pts;
+        G.fallPoints += pts;
         G.currentMultiplier = mult; // track for HUD display
       }
     }

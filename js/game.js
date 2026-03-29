@@ -147,6 +147,9 @@ function initSession() {
   G.orbPoints = 0;
   G.gravityPenalty = 0;
   G.currentMultiplier = 1.0;
+  G.fallPoints = 0;
+  G.bestFallPoints = 0;
+  G.floatingTexts = [];
   // Seed initial world
   ensurePlatformsBelow();
   ensureOrbsBelow();
@@ -179,6 +182,23 @@ function onLanding(platform) {
 
   G.shakeTimer = SHAKE_DURATION;
   spawnLandingParticles(G.player.x + PLAYER_W / 2, G.player.y + PLAYER_H);
+
+  // Show fall points popup
+  if (G.state === 'playing' && G.fallPoints > 0) {
+    const cx = G.player.x + PLAYER_W / 2;
+    const ty = G.player.y - 60;
+    const pts = Math.round(G.fallPoints);
+    const isRecord = pts > G.bestFallPoints && G.bestFallPoints > 0;
+    if (isRecord) {
+      G.bestFallPoints = pts;
+      spawnFloatingText(cx, ty - 20, 'New record!', '#ff4466', 18);
+      spawnFloatingText(cx, ty, '+' + pts, '#ffdd00', 28);
+    } else {
+      if (pts > G.bestFallPoints) G.bestFallPoints = pts;
+      spawnFloatingText(cx, ty, '+' + pts, '#ffdd00', 24);
+    }
+  }
+  G.fallPoints = 0;
 }
 
 // ---- Update ----
@@ -236,9 +256,10 @@ function update(dt) {
     // Orb collision & animation
     updateOrbs(dt);
 
-    // Particles & shake
+    // Particles, floating texts & shake
     updateParticles(dt);
     updateBoosterFireworks(dt);
+    updateFloatingTexts(dt);
     if (G.shakeTimer > 0) G.shakeTimer -= dt;
 
     // HUD
@@ -271,6 +292,7 @@ function render() {
   renderParticles(ctx);
   renderBoosterFireworks(ctx);
   renderBoosterLabel(ctx);
+  renderFloatingTexts(ctx);
 
   ctx.restore();
 

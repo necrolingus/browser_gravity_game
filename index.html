@@ -185,6 +185,10 @@
       display: none;
     }
 
+    .hud-row {
+      display: contents;
+    }
+
     .gravity-bar-container {
       display: none;
       width: 300px;
@@ -287,6 +291,12 @@
       font-weight: 700;
       color: #ff5566;
       font-size: 22px;
+    }
+
+    #hudDifficulty,
+    #hudBooster,
+    #hudMult {
+      display: none;
     }
 
     .hud-mult {
@@ -429,10 +439,22 @@
 
       .hud {
         padding: 4px 6px;
-        gap: 4px;
+        gap: 2px 4px;
         font-size: 11px;
         flex-wrap: wrap;
         justify-content: center;
+      }
+
+      .hud-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: 100%;
+      }
+
+      .hud-row-score {
+        gap: 8px;
       }
 
       .gravity-bar-container {
@@ -471,9 +493,6 @@
         font-size: 10px;
       }
 
-      #hudDifficulty {
-        display: none;
-      }
 
       .mobile-hint {
         display: inline;
@@ -484,11 +503,17 @@
       }
 
       .btn-end {
-        top: 2px;
-        right: 2px;
+        position: absolute;
+        right: 6px;
+        top: 50%;
+        transform: translateY(-50%);
         font-size: 9px;
         padding: 3px 8px;
         z-index: 30;
+      }
+
+      .hud {
+        position: fixed;
       }
 
       .overlay-content {
@@ -539,23 +564,27 @@
       <div class="gravity-bar-fill" id="gravityBarFill"></div>
       <div class="gravity-bar-label" id="gravityBarLabel">100</div>
     </div>
-    <div class="orb-stat"><span class="orb-dot yellow">2</span><span id="hudYellow">0</span> <span style="color:#99a">=
-      </span><span id="hudYellowPts" style="color:#ffdd00">0</span></div>
-    <div class="orb-stat"><span class="orb-dot blue">5</span><span id="hudBlue">0</span> <span style="color:#99a">=
-      </span><span id="hudBluePts" style="color:#66ddff">0</span></div>
-    <div class="orb-stat"><span class="orb-dot red">10</span><span id="hudRed">0</span> <span style="color:#99a">=
-      </span><span id="hudRedPts" style="color:#ff3355">0</span></div>
-    <div class="orb-stat"><span class="orb-dot white">25</span><span id="hudWhite">0</span> <span style="color:#99a">=
-      </span><span id="hudWhitePts" style="color:#fff">0</span></div>
+    <div class="hud-row hud-row-orbs">
+      <div class="orb-stat"><span class="orb-dot yellow">2</span><span id="hudYellow">0</span> <span style="color:#99a">=
+        </span><span id="hudYellowPts" style="color:#ffdd00">0</span></div>
+      <div class="orb-stat"><span class="orb-dot blue">5</span><span id="hudBlue">0</span> <span style="color:#99a">=
+        </span><span id="hudBluePts" style="color:#66ddff">0</span></div>
+      <div class="orb-stat"><span class="orb-dot red">10</span><span id="hudRed">0</span> <span style="color:#99a">=
+        </span><span id="hudRedPts" style="color:#ff3355">0</span></div>
+      <div class="orb-stat"><span class="orb-dot white">25</span><span id="hudWhite">0</span> <span style="color:#99a">=
+        </span><span id="hudWhitePts" style="color:#fff">0</span></div>
+    </div>
     <div class="hud-sep"></div>
-    <div class="hud-item">Score: <span class="hud-total" id="hudTotal">0</span><span class="hud-penalty"
-        id="hudPenalty"></span></div>
-    <div class="hud-sep"></div>
-    <div class="hud-item hud-mult" id="hudMult">1.0x</div>
-    <div class="hud-item" id="hudDifficulty">Easy</div>
-    <div class="hud-item" id="hudBooster">Next booster: 12</div>
+    <div class="hud-row hud-row-score">
+      <div class="hud-item">Score: <span class="hud-total" id="hudTotal">0</span><span class="hud-penalty"
+          id="hudPenalty"></span></div>
+      <div class="hud-sep"></div>
+      <div class="hud-item hud-mult" id="hudMult">1.0x</div>
+      <div class="hud-item" id="hudDifficulty">Easy</div>
+      <div class="hud-item" id="hudBooster">Next booster: 12</div>
+      <button class="btn-end hidden" id="btnEnd">End Game</button>
+    </div>
   </div>
-  <button class="btn-end hidden" id="btnEnd">End Game</button>
 
   <!-- Title Screen -->
   <div class="overlay" id="titleOverlay">

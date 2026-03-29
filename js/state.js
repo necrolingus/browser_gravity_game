@@ -52,6 +52,11 @@ const G = {
   gravityPenalty: 0,
   currentMultiplier: 1.0,
 
+  // Fall scoring
+  fallPoints: 0,
+  bestFallPoints: 0,
+  floatingTexts: [],
+
   // Effects
   shakeTimer: 0,
   particles: [],

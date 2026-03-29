@@ -229,6 +229,60 @@ function renderBoosterLabel(ctx) {
   }
 }
 
+// ---- Floating text (fall score popups) ----
+
+function spawnFloatingText(x, y, text, color, size) {
+  G.floatingTexts.push({
+    x: x,
+    y: y,
+    text: text,
+    color: color,
+    size: size || 22,
+    life: 1.5,
+    maxLife: 1.5,
+    vy: -80,
+    scale: 0,
+  });
+}
+
+function updateFloatingTexts(dt) {
+  for (let i = G.floatingTexts.length - 1; i >= 0; i--) {
+    const ft = G.floatingTexts[i];
+    ft.life -= dt;
+    ft.y += ft.vy * dt;
+    ft.vy *= 0.97;
+    // Scale: pop in quickly, then hold
+    const age = ft.maxLife - ft.life;
+    if (age < 0.15) {
+      ft.scale = age / 0.15;
+    } else {
+      ft.scale = 1;
+    }
+    if (ft.life <= 0) G.floatingTexts.splice(i, 1);
+  }
+}
+
+function renderFloatingTexts(ctx) {
+  for (const ft of G.floatingTexts) {
+    const alpha = clamp(ft.life / (ft.maxLife * 0.3), 0, 1);
+    const scale = ft.scale;
+    ctx.save();
+    ctx.translate(ft.x, ft.y);
+    ctx.scale(scale, scale);
+    ctx.globalAlpha = alpha;
+    ctx.font = `bold ${ft.size}px Segoe UI, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(0,0,0,0.7)';
+    ctx.shadowBlur = 6;
+    ctx.fillStyle = ft.color;
+    ctx.fillText(ft.text, 0, 0);
+    ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+}
+
 // Legacy function name kept for game.js call — now a no-op in screen space
 function renderBoosterBanner(ctx) {
   // Removed — booster visuals are now rendered in world space
