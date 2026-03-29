@@ -146,6 +146,7 @@ function initSession() {
   G.orbCounts = { yellow: 0, blue: 0, red: 0, white: 0 };
   G.orbPoints = 0;
   G.gravityPenalty = 0;
+  G.currentMultiplier = 1.0;
   // Seed initial world
   ensurePlatformsBelow();
   ensureOrbsBelow();

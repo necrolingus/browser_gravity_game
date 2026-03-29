@@ -172,14 +172,31 @@ function renderPlayer(ctx) {
       ctx.fill();
     }
     // Percentage text
-    ctx.font = 'bold 13px Segoe UI, sans-serif';
+    const mult = getPointsMultiplier();
+    const barLabel = Math.round(pct * 100) + '%';
+    ctx.font = 'bold 18px Segoe UI, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#fff';
-    ctx.shadowColor = 'rgba(0,0,0,0.5)';
+    ctx.shadowColor = 'rgba(0,0,0,0.6)';
     ctx.shadowBlur = 3;
-    ctx.fillText(Math.round(pct * 100) + '%', px + PLAYER_W / 2, barY + barH / 2);
+    ctx.fillText(barLabel, px + PLAYER_W / 2, barY + barH / 2);
     ctx.shadowBlur = 0;
+
+    // Multiplier badge next to gravity bar (when above 1x)
+    if (mult > 1.0) {
+      const badgeX = barX + barW + 8;
+      const badgeY = barY + barH / 2;
+      const multText = mult.toFixed(1) + 'x';
+      ctx.font = 'bold 36px Segoe UI, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = mult >= 1.3 ? '#ff5050' : '#f0c040';
+      ctx.shadowColor = mult >= 1.3 ? 'rgba(255,80,80,0.9)' : 'rgba(240,190,60,0.8)';
+      ctx.shadowBlur = 12;
+      ctx.fillText(multText, badgeX, badgeY);
+      ctx.shadowBlur = 0;
+    }
   }
 
   // Dash counter pips
