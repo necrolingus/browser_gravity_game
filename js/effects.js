@@ -1,5 +1,5 @@
 // ============================================================
-//  GRAVITY FALL - Visual Effects (Background, Particles)
+//  GRAVITY FALLS - Visual Effects (Background, Particles)
 // ============================================================
 
 // Space background stars
@@ -22,7 +22,7 @@ function initBgStars() {
         twinkleOffset: rand(0, Math.PI * 2),
         layer: layer,
         parallax: layer === 0 ? 0.02 : layer === 1 ? 0.05 : 0.1,
-        color: ['#ffffff','#aaccff','#ffddaa','#ffaacc','#aaffcc'][Math.floor(Math.random()*5)]
+        color: ['#ffffff', '#aaccff', '#ffddaa', '#ffaacc', '#aaffcc'][Math.floor(Math.random() * 5)]
       });
     }
   }
@@ -103,7 +103,7 @@ function renderBackground(ctx) {
   ctx.globalAlpha = 1;
 
   // Shooting stars
-  shootingStarTimer -= 1/60;
+  shootingStarTimer -= 1 / 60;
   if (shootingStarTimer <= 0) {
     shootingStarTimer = rand(2, 6);
     shootingStars.push({
@@ -119,7 +119,7 @@ function renderBackground(ctx) {
     const ss = shootingStars[i];
     ss.x += ss.vx / 60;
     ss.y += ss.vy / 60;
-    ss.life -= 1/60;
+    ss.life -= 1 / 60;
     if (ss.life <= 0) { shootingStars.splice(i, 1); continue; }
     const alpha = clamp(ss.life / ss.maxLife, 0, 1);
     const angle = Math.atan2(ss.vy, ss.vx);

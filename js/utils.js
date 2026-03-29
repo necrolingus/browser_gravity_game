@@ -1,5 +1,5 @@
 // ============================================================
-//  GRAVITY FALL - Utility Functions
+//  GRAVITY FALLS - Utility Functions
 // ============================================================
 
 function rand(a, b) { return Math.random() * (b - a) + a; }

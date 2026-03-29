@@ -1,5 +1,5 @@
 // ============================================================
-//  GRAVITY FALL - Main Game Loop & State Transitions
+//  GRAVITY FALLS - Main Game Loop & State Transitions
 // ============================================================
 
 const canvas = document.getElementById('gameCanvas');
@@ -53,7 +53,7 @@ resize();
 
 // ---- Input ----
 window.addEventListener('keydown', e => {
-  if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Space',' '].includes(e.key || e.code)) e.preventDefault();
+  if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Space', ' '].includes(e.key || e.code)) e.preventDefault();
   G.keys[e.code] = true;
 });
 window.addEventListener('keyup', e => { G.keys[e.code] = false; });

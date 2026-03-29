@@ -1,5 +1,5 @@
 // ============================================================
-//  GRAVITY FALL - Constants
+//  GRAVITY FALLS - Constants
 // ============================================================
 
 // Player
@@ -14,10 +14,10 @@ const GRAVITY_STEAL_RATIO = 2;
 // Each entry: [minPercent, maxPercent, multiplier]
 const MULTIPLIER_TIERS = [
   [70, 100, 1.0],
-  [50,  69, 1.1],
-  [20,  49, 1.2],
-  [10,  19, 1.3],
-  [ 1,   9, 1.5],
+  [50, 69, 1.1],
+  [20, 49, 1.2],
+  [10, 19, 1.3],
+  [1, 9, 1.5],
 ];
 
 // Booster
@@ -57,9 +57,9 @@ const ORB_RADIUS = 13;
 const WHITE_ORB_RADIUS = 17;
 const ORB_TYPES = [
   { name: 'yellow', color: '#ffdd00', glow: 'rgba(255,220,0,0.7)', points: 2, weight: 55 },
-  { name: 'blue',   color: '#66ddff', glow: 'rgba(100,220,255,0.7)', points: 5, weight: 27 },
-  { name: 'red',    color: '#ff3355', glow: 'rgba(255,50,80,0.7)', points: 10, weight: 13 },
-  { name: 'white',  color: '#ffffff', glow: 'rgba(255,255,255,0.9)', points: 25, weight: 5 },
+  { name: 'blue', color: '#66ddff', glow: 'rgba(100,220,255,0.7)', points: 5, weight: 27 },
+  { name: 'red', color: '#ff3355', glow: 'rgba(255,50,80,0.7)', points: 10, weight: 13 },
+  { name: 'white', color: '#ffffff', glow: 'rgba(255,255,255,0.9)', points: 25, weight: 5 },
 ];
 const ORBS_PER_SCREEN = 10;
 const WHITE_ORB_BASE_SWIRL_SPEED = 2.0;

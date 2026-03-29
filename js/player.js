@@ -1,5 +1,5 @@
 // ============================================================
-//  GRAVITY FALL - Player Logic & Rendering
+//  GRAVITY FALLS - Player Logic & Rendering
 // ============================================================
 
 function resetPlayer() {

@@ -1,5 +1,5 @@
 // ============================================================
-//  GRAVITY FALL - Platform Generation & Management
+//  GRAVITY FALLS - Platform Generation & Management
 // ============================================================
 
 function createPlatform(y) {

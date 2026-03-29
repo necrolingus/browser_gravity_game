@@ -1,5 +1,5 @@
 // ============================================================
-//  GRAVITY FALL - Bot AI (Title Screen Demo)
+//  GRAVITY FALLS - Bot AI (Title Screen Demo)
 // ============================================================
 
 function botUpdate() {
