@@ -101,16 +101,22 @@ canvas {
 
 .github-link {
   display: inline-block;
-  margin-top: 18px;
-  font-size: 13px;
-  color: #7799bb;
+  margin-top: 20px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ccddef;
   text-decoration: none;
-  transition: color 0.2s;
+  border: 1px solid rgba(100, 200, 255, 0.3);
+  border-radius: 8px;
+  background: rgba(100, 200, 255, 0.08);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 
 .github-link:hover {
-  color: #aaccee;
-  text-decoration: underline;
+  color: #fff;
+  background: rgba(100, 200, 255, 0.18);
+  border-color: rgba(100, 200, 255, 0.5);
 }
 
 .btn {
